@@ -1,5 +1,6 @@
-const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
-const n = 3
+// const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
+const m = [1, 8, 7, 2, 9, 6, 3, 4, 5, 11, 22, 33, 44, 55, 66, 77]
+const n = 4
 const BENCH_LABEL = 'BENCH'
 
 function printMatrix (m, n) {
@@ -85,7 +86,31 @@ function extractEdge (m, n) {
   }
 }
 
+function genSubMatrix (m, n, offset) {
+  const returnVoidArray = n === 1 || n === 2
+  const returnM1x1 = n === 3
+
+  if (returnVoidArray) {
+    return []
+  }
+
+  if (returnM1x1) {
+    return m[4]
+  }
+
+  return m.filter(function (_, index) {
+    const row = (index + 1) / n
+		console.log('​genSubMatrix -> row', row)
+    const col = index - row * n + 1
+    const canPass = (row > offset) && (col > offset)
+
+    return canPass
+  })
+}
+
 extractEdge(m, n)
+
+console.log('Submatrix of m with offset 1 ::>', JSON.stringify(genSubMatrix(m, 4, 1), null, 2))
 
 console.log('Given "m" equals to ', m, ' and "n" equals to ', n)
 console.log('\n')
