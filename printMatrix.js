@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 // const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
 const m = [1, 8, 7, 2, 9, 6, 3, 4, 5, 11, 22, 33, 44, 55, 66, 77]
 const n = 4
@@ -86,7 +87,7 @@ function extractEdge (m, n) {
   }
 }
 
-function genSubMatrix (m, n, offset) {
+function genSubmatrix (m, n, offset) {
   const returnVoidArray = n === 1 || n === 2
   const returnM1x1 = n === 3
 
@@ -99,10 +100,11 @@ function genSubMatrix (m, n, offset) {
   }
 
   return m.filter(function (_, index) {
-    const row = (index + 1) / n
-		console.log('​genSubMatrix -> row', row)
-    const col = index - row * n + 1
-    const canPass = (row > offset) && (col > offset)
+    const row = Math.ceil((index + 1) / n)
+    const col = index + 1 - (row - 1) * n
+    const isSubmatrixRow = (row > offset) && row <= (n - offset)
+    const isSubmatrixCol = (col > offset) && col <= (n - offset)
+    const canPass = isSubmatrixRow && isSubmatrixCol
 
     return canPass
   })
@@ -110,7 +112,7 @@ function genSubMatrix (m, n, offset) {
 
 extractEdge(m, n)
 
-console.log('Submatrix of m with offset 1 ::>', JSON.stringify(genSubMatrix(m, 4, 1), null, 2))
+console.log('Submatrix of m with offset 1 ::>', JSON.stringify(genSubmatrix(m, 4, 1), null, 2))
 
 console.log('Given "m" equals to ', m, ' and "n" equals to ', n)
 console.log('\n')
