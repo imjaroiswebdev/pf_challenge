@@ -1,17 +1,40 @@
 /* eslint-disable operator-linebreak */
-// const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
-const m = [1, 8, 7, 2, 9, 6, 3, 4, 5, 11, 22, 33, 44, 55, 66, 77]
-const n = 4
+const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
+// const m = [1, 8, 7, 2, 9, 6, 3, 4, 5, 11, 22, 33, 44, 55, 66, 77]
+const n = 3
+// const n = 4
 const BENCH_LABEL = 'BENCH'
 
 function printMatrix (m, n) {
-  console.time(BENCH_LABEL)
-
-  const result = [1, 2, 3, 4, 5, 6, 7, 9]
-
-  console.timeEnd(BENCH_LABEL)
+  const result = spiralify(m, n, [])
 
   return result
+}
+
+function spiralify (m, n, acummulator) {
+  const needToReturn = n === 0
+  const isTooTinyMatrix = n === 1
+
+  if (needToReturn) {
+    return acummulator
+  }
+
+  if (isTooTinyMatrix) {
+    return acummulator.concat(m)
+  }
+
+  const extractedEdges = extractEdge(m, n)
+
+  const updatedAccum = acummulator.concat(
+    Object.values(extractedEdges).reduce(function (result, edge) {
+      return result.concat(edge)
+    })
+  )
+
+  const subM = genSubmatrix(m, n, 1)
+  const submatrixSize = Math.ceil(subM.length / (n - 1))
+
+  return spiralify(subM, submatrixSize, updatedAccum)
 }
 
 function extractEdge (m, n) {
@@ -55,38 +78,54 @@ function extractEdge (m, n) {
     const till = n - 1
 
     return {
-      left: genIndexes([], till, 1, { // All first numbers of every row, except the last and fixed col 1
-        genOnlyForRow: false,
-        fixedIndex: 1
-      }),
-      bottom: genIndexes([], till, 1, { // All numbers of last row, except the last and fixed row n (last)
-        genOnlyForRow: true,
-        fixedIndex: n
-      }),
-      right: genIndexes([], n, 2, { // All of righter column column except the first
-        genOnlyForRow: false,
-        fixedIndex: n
-      }),
-      top: genIndexes([], n, 2, { // All first column numbers except the first
-        genOnlyForRow: true,
-        fixedIndex: 1
-      })
+      left: n === 2
+        ? [[1, 1]]
+        : genIndexes([], till, 1, { // All first numbers of every row, except the last and fixed col 1
+          genOnlyForRow: false,
+          fixedIndex: 1
+        }),
+
+      bottom: n === 2
+        ? [[2, 1]]
+        : genIndexes([], till, 1, { // All numbers of last row, except the last and fixed row n (last)
+          genOnlyForRow: true,
+          fixedIndex: n
+        }),
+
+      right: n === 2
+        ? [[2, 2]]
+        : genIndexes([], n, 2, { // All of righter column column except the first
+          genOnlyForRow: false,
+          fixedIndex: n
+        }).reverse(),
+
+      top: n === 2
+        ? [[1, 2]]
+        : genIndexes([], n, 2, { // All first column numbers except the first
+          genOnlyForRow: true,
+          fixedIndex: 1
+        }).reverse()
     }
   }
 
-  console.log('extracted edges::> left::>', JSON.stringify(indexListByEdge(n).left, null, 2))
-  console.log('extracted edges::> bottom::>', JSON.stringify(indexListByEdge(n).bottom, null, 2))
-  console.log('extracted edges::> right::>', JSON.stringify(indexListByEdge(n).right, null, 2))
-  console.log('extracted edges::> top::>', JSON.stringify(indexListByEdge(n).top, null, 2))
+  const matrixIndexExtractor = extractor(m)
+  const indexList = indexListByEdge(n)
+  const generateEdge = edge => indexList[edge].map(indexPair => matrixIndexExtractor.apply(null, indexPair))
 
   return {
-    left: [1, 2],
-    bottom: [3, 4],
-    right: [5, 6],
-    top: [7, 8]
+    left: generateEdge('left'),
+    bottom: generateEdge('bottom'),
+    right: generateEdge('right'),
+    top: generateEdge('top')
   }
 }
 
+/**
+ * Generates a submatrix from a supplied matrix and an offset
+ * @param {Array} m Source matrix
+ * @param {Number} n Size of source matrix
+ * @param {Number} offset Offset of penetration in source matrix order
+ */
 function genSubmatrix (m, n, offset) {
   const returnVoidArray = n === 1 || n === 2
   const returnM1x1 = n === 3
@@ -96,10 +135,10 @@ function genSubmatrix (m, n, offset) {
   }
 
   if (returnM1x1) {
-    return m[4]
+    return [m[4]]
   }
 
-  return m.filter(function (_, index) {
+  const submatrix = m.filter(function (_, index) {
     const row = Math.ceil((index + 1) / n)
     const col = index + 1 - (row - 1) * n
     const isSubmatrixRow = (row > offset) && row <= (n - offset)
@@ -108,14 +147,15 @@ function genSubmatrix (m, n, offset) {
 
     return canPass
   })
+
+  return submatrix
 }
 
-extractEdge(m, n)
-
-console.log('Submatrix of m with offset 1 ::>', JSON.stringify(genSubmatrix(m, 4, 1), null, 2))
-
+console.time(BENCH_LABEL)
 console.log('Given "m" equals to ', m, ' and "n" equals to ', n)
 console.log('\n')
 console.log('The spiral sorted array is: ', printMatrix(m, n))
+
+console.timeEnd(BENCH_LABEL)
 
 module.exports = printMatrix

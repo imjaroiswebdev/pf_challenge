@@ -2,11 +2,25 @@ const printMatrix = require('./printMatrix')
 
 /* eslint-disable no-undef */
 test('Given an square matrix and its size, should print each element in a counterclockwise spiral', () => {
-  const m = [1, 8, 7, 2, 9, 6, 3, 4, 5]
-  const n = 3
+  const given = {
+    m: [1, 8, 7, 2, 9, 6, 3, 4, 5],
+    n: 3
+  }
 
-  const expected = [1, 2, 3, 4, 5, 6, 7, 9]
-  const actual = printMatrix(m, n)
+  const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  const actual = printMatrix(given.m, given.n)
+
+  expect(actual).toEqual(expected)
+})
+
+test('Given an 4x4 matrix of letters. Shoulh print each letter in a counterclockwise spiral', () => {
+  const given = {
+    m: ['a', 'l', 'k', 'j', 'b', 'm', 'p', 'i', 'c', 'n', 'o', 'h', 'd', 'e', 'f', 'g'],
+    n: 4
+  }
+
+  const expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
+  const actual = printMatrix(given.m, given.n)
 
   expect(actual).toEqual(expected)
 })

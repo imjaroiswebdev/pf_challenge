@@ -4,6 +4,7 @@
   "description": "Penta Challenge",
   "main": "index.js",
   "scripts": {
+    "printMatrix": "node printMatrix",
     "test": "npx jest"
   },
   "author": "Jose Antonio Reyes",
