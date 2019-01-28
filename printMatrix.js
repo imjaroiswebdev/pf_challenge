@@ -6,14 +6,16 @@ const n = 3
 const BENCH_LABEL = 'BENCH'
 
 function printMatrix (m, n) {
+  console.time(BENCH_LABEL)
   const result = spiralify(m, n, [])
+  console.timeEnd(BENCH_LABEL)
 
   return result
 }
 
 function spiralify (m, n, acummulator) {
-  const needToReturn = n === 0
-  const isTooTinyMatrix = n === 1
+  const needToReturn = n === 0 || m.length === 0
+  const isTooTinyMatrix = n === 1 || m.length === 1
 
   if (needToReturn) {
     return acummulator
@@ -151,11 +153,8 @@ function genSubmatrix (m, n, offset) {
   return submatrix
 }
 
-console.time(BENCH_LABEL)
 console.log('Given "m" equals to ', m, ' and "n" equals to ', n)
 console.log('\n')
 console.log('The spiral sorted array is: ', printMatrix(m, n))
-
-console.timeEnd(BENCH_LABEL)
 
 module.exports = printMatrix
